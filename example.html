@@ -1,0 +1,100 @@
+<html>
+	<head>
+		<title>Some Super Ace Knockout Driven Charts</title>
+		<style type="text/css">
+			div
+			{
+				border: 2px solid #555;
+				border-radius: 10px;
+				padding: 10px;
+				margin: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="line-example">
+			<h2>Simple Line Chart Example</h2>
+			<canvas id="some-simple-line-chart"
+					width="400" height="150"
+					data-bind="chart: { type: 'Line', data: SimpleLineData }"></canvas>
+			<p>The above chart is generated using the data in the view model and rendered into the canvas</p>
+		</div>
+
+		<div id="dynamic-doughnut-example">
+			<h2>TRIPLE D - WUT WUT - Dynamic Doughnut Data!</h2>
+			<canvas id="some-dynamic-doughnut-chart"
+					width="300" height="300"
+					data-bind="chart: { type: 'Doughnut', data: DynamicDoughnutData, options: { observeChanges: true, throttle: 1000 } }"></canvas>
+			<p>The above chart is generated dynamically using the data in the view model and rendered into the canvas</p>
+			<p>If you change any of the values beneath the chart will update to reflect them every second</p>
+			<label>Red</label><input type="number" data-bind="value: RedValue" />
+			<label>Green</label><input type="number" data-bind="value: GreenValue" />
+			<label>Yellow</label><input type="number" data-bind="value: YellowValue" />
+		</div>
+
+		<script src="libs/chart.js" type="text/javascript"></script>
+		<script src="libs/knockout-3.2.0.min.js" type="text/javascript"></script>
+		<script src="src/knockout.chart.js" type="text/javascript"></script>
+
+		<script>
+
+			function DummyViewModel()
+			{
+				this.SimpleLineData = {
+					labels: ["January", "February", "March", "April", "May", "June", "July"],
+					datasets: [
+						{
+							label: "My First dataset",
+							fillColor: "rgba(220,220,220,0.2)",
+							strokeColor: "rgba(220,220,220,1)",
+							pointColor: "rgba(220,220,220,1)",
+							pointStrokeColor: "#fff",
+							pointHighlightFill: "#fff",
+							pointHighlightStroke: "rgba(220,220,220,1)",
+							data: [65, 59, 80, 81, 56, 55, 40]
+						},
+						{
+							label: "My Second dataset",
+							fillColor: "rgba(151,187,205,0.2)",
+							strokeColor: "rgba(151,187,205,1)",
+							pointColor: "rgba(151,187,205,1)",
+							pointStrokeColor: "#fff",
+							pointHighlightFill: "#fff",
+							pointHighlightStroke: "rgba(151,187,205,1)",
+							data: [28, 48, 40, 19, 86, 27, 90]
+						}
+					]
+				};
+
+				this.RedValue = ko.observable(300);
+				this.GreenValue = ko.observable(50);
+				this.YellowValue = ko.observable(100);
+
+				this.DynamicDoughnutData = [
+					{
+						value: this.RedValue,
+						color:"#F7464A",
+						highlight: "#FF5A5E",
+						label: "Red"
+					},
+					{
+						value: this.GreenValue,
+						color: "#46BFBD",
+						highlight: "#5AD3D1",
+						label: "Green"
+					},
+					{
+						value: this.YellowValue,
+						color: "#FDB45C",
+						highlight: "#FFC870",
+						label: "Yellow"
+					}
+				];
+
+
+			}
+
+            ko.applyBindings(new DummyViewModel());
+        </script>
+	</body>
+</html>
