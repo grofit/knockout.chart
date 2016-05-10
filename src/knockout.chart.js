@@ -82,54 +82,38 @@
         }
     };
 
-    var convertAllDataToNumeric = function(model) {
-        if(model.datasets) // Array checks
-        {
-            model.datasets.forEach(function(dataset){
-                for(var i=0;i<dataset.data.length;i++){
-                    dataset.data[i] = parseFloat(dataset.data[i]);
-                }
-            });
-        }
-        else // Segment checks
-        {
-            model.forEach(function(datapoint){
-                datapoint.value = parseInt(datapoint.value);
-            });
-        }
-    };
-
     ko.bindingHandlers.chart = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel) {
             var allBindings = allBindingsAccessor();
             var chartBinding = allBindings.chart;
             var activeChart;
-            var elementWidth = element.width;
-            var elementHeight = element.height;
+            var chartData;
 
             var createChart = function() {
                 var chartType = ko.unwrap(chartBinding.type);
-                var context2d = element.getContext("2d");
                 var data = ko.toJS(chartBinding.data);
                 var options = ko.toJS(chartBinding.options);
 
-                convertAllDataToNumeric(data); // ko treats values from inputs as strings, chart no likey
-                activeChart = new Chart(context2d)[chartType](data, options);
+                chartData = {
+                    type: chartType,
+                    data: data,
+                    options: options
+                };
+
+                activeChart = new Chart(element, chartData);
             };
 
             var refreshChart = function() {
-                activeChart.destroy();
-
-                // This stops the chart shrinking into oblivion
-                element.width = elementWidth;
-                element.height = elementHeight;
-
-                createChart();
+                chartData.data = ko.toJS(chartBinding.data);
+                activeChart.update();
+                activeChart.resize();
             };
 
             var subscribeToChanges = function() {
                 var throttleAmount = ko.unwrap(chartBinding.options.throttle) || 100;
                 var dataSubscribables = getSubscribables(chartBinding.data);
+                console.log("found obs", dataSubscribables);
+
                 ko.observableGroup(dataSubscribables)
                     .throttle(throttleAmount)
                     .subscribe(refreshChart);

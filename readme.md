@@ -1,6 +1,6 @@
 # Knockout.Chart
 
-A simple binding to let knockoutjs and chartjs come together for the greater good.
+A simple binding to let knockoutjs and chartjs (2.x version) come together for the greater good.
 
 It supports the basic graph types and should work with any custom ones.
 
@@ -8,48 +8,20 @@ One major reason why this is a good idea is because this way you do not need you
 knowing about your DOM elements, as the binding takes care of that, so you just expose
 the meaningful stuff.
 
-## Quirks
-
-So there is a lot of magic behind the scenes to allow for observable hookins, there are a few issues
-which require a bit of advance warning.
-
-* If you are going to dynamically upate your data set a width/height on your canvas
-
-This is because ChartJS seems to freak out when its destroyed and recreated and will otherwise shrink
-into oblivion, we manually cache the desired width and height to stop this happening
-
-* Do not use textual data for values
-
-ChartJS can only handle numeric data, and we try to account for this when you receive input via knockout bindings
-as by default ko treats all input values as a string, ChartJS dislikes this, so we have to go through the generated
-data and manually replace textual instances of numbers to actual numbers.
-
-* It is advised you set a throttle when you use observeChanges, and a graph will only update if observeChanges is true
-
-It is a bit more resource intensive than we would like dynamically updating the data in the charts, it is not
-super meltdown but it can slow things down if you are changing a lot of data in a short space of time. So it is
-recommended to put a throttle on for at least 100 or higher to make sure you are not refreshing too much.
-
-* Make sure the type matches the caps of the desired type
-
-If you want a Pie chart make sure you do `type: 'Pie'` not `type: 'pie'` as it will not recognise the method and
-will fall over. There was an initial fix to allow you to put in whatever case you wanted but then we realised
-`PolarArea` would not work as it would end up as `Polararea` so we opted to leave that out for you to manage.
-
 ## Usage
 The binding expects a type element describing what type of chart you want and the data you wish to expose:
 ```
-<canvas data-bind="chart: { type: 'Bar', data: myData }"></canvas>
+<canvas data-bind="chart: { type: 'bar', data: myData }"></canvas>
 ```
 
 Or it can be called with a options if you require more control over the chart:
 ```
-<canvas data-bind="chart: { type: 'Pie', data: myData, options: { segmentShowStroke: true, segmentStrokeColor: '#fff', segmentStrokeWidth: 2 } }"></canvas>
+<canvas data-bind="chart: { type: 'pie', data: myData, options: { segmentShowStroke: true, segmentStrokeColor: '#fff', segmentStrokeWidth: 2 } }"></canvas>
 ```
 
 Or you can tell it to listen to knockout changes:
 ```
-<canvas data-bind="chart: { type: 'Pie', data: myData, options: { observeChanges: true, throttle: 100 } }"></canvas>
+<canvas data-bind="chart: { type: 'pie', data: myData, options: { observeChanges: true, throttle: 100 } }"></canvas>
 ```
 
 
