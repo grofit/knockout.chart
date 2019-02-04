@@ -58,29 +58,38 @@
         return subscribables;
     };
 
-    var scanForObservablesIn = function(model, subscribables){
-        for (var parameter in model)
-        {
-            var typeOfData = getType(model[parameter]);
-            switch(typeOfData)
-            {
-                case "object": { scanForObservablesIn(model[parameter], subscribables); } break;
-                case "array":
-                {
-                    var underlyingArray = model[parameter]();
-                    underlyingArray.forEach(function(entry, index){ scanForObservablesIn(underlyingArray[index], subscribables); });
-                }
-                break;
-
-                default:
-                {
-                    if(ko.isComputed(model[parameter]) || ko.isObservable(model[parameter]))
-                    { subscribables.push(model[parameter]); }
-                }
-                break;
+        var scanForObservablesIn = function (model, subscribables) {
+            if (Site.utilities.isNullOrUndefined(model)) {
+                return;
             }
-        }
-    };
+
+            var propertyNames = [];
+            if (window.navigator.userAgent.indexOf("MSIE") > -1 || navigator.userAgent.indexOf("Trident") > -1) {
+                propertyNames = Object.getOwnPropertyNames(model);
+            }
+            else {
+                propertyNames = Reflect.ownKeys(model);
+            }
+
+            propertyNames.forEach(function (propertyName) {
+                var typeOfData = getType(model[propertyName]);
+                switch (typeOfData) {
+                    case "object": { scanForObservablesIn(model[propertyName], subscribables); } break;
+                    case "array":
+                        {
+                            var underlyingArray = model[propertyName]();
+                            underlyingArray.forEach(function (entry, index) { scanForObservablesIn(underlyingArray[index], subscribables); });
+                        }
+                        break;
+
+                    default:
+                        {
+                            if (ko.isComputed(model[propertyName]) || ko.isObservable(model[propertyName])) { subscribables.push(model[propertyName]); }
+                        }
+                        break;
+                }
+            });
+        };
 
     ko.bindingHandlers.chart = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel) {
