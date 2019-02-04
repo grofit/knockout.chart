@@ -59,7 +59,7 @@
     };
 
         var scanForObservablesIn = function (model, subscribables) {
-            if (Site.utilities.isNullOrUndefined(model)) {
+            if (model === null || model === undefined) {
                 return;
             }
 
